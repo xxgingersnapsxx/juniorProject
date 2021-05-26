@@ -81,11 +81,10 @@ public class MoviesDAO {
 		builder.append("          AND LOCATION_ID = (SELECT LOCATION_ID");
 		builder.append("                               FROM LOCATIONS");
 		builder.append("                              WHERE LOCATION_NAME = 'CGV'||?)");
-		// TODO : ? 사용해서 지점별로 바꿔야 함
 
 		String sql = builder.toString();
 		PreparedStatement statement = connection.prepareStatement(sql);
-	
+
 		statement.setString(1, locName);
 
 		List<moviesByLocVO> list = new ArrayList<moviesByLocVO>();
@@ -93,7 +92,6 @@ public class MoviesDAO {
 		while (resultSet.next()) {
 			int showId = resultSet.getInt("SHOW_ID");
 			String mvTitle = resultSet.getString("MV_TITLE");
-			// 여기 localDateTime으로 받아오는건지 확신 없음 stackoverflow보고 함
 			LocalDateTime startsAt = resultSet.getTimestamp("STARTS_AT").toLocalDateTime();
 			LocalDateTime endsAt = resultSet.getTimestamp("ENDS_AT").toLocalDateTime();
 			int priceAmt = resultSet.getInt("PRICE_AMT");

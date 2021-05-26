@@ -1,25 +1,19 @@
 package js.cinemas.locs;
 
 public class ZoneVO {
-	private String locationId;
 	private int zoneId;
 	private int seatCnt;
 	private String openedYn;
+	private String locationId;
+	private String locationName;
 
-	public ZoneVO(String locationId, int zoneId, int seatCnt, String openedYn) {
+	public ZoneVO(int zoneId, int seatCnt, String openedYn, String locationId, String locationName) {
 		super();
-		this.locationId = locationId;
 		this.zoneId = zoneId;
 		this.seatCnt = seatCnt;
 		this.openedYn = openedYn;
-	}
-
-	public String getLocationId() {
-		return locationId;
-	}
-
-	public void setLocationId(String locationId) {
 		this.locationId = locationId;
+		this.locationName = locationName;
 	}
 
 	public int getZoneId() {
@@ -46,10 +40,26 @@ public class ZoneVO {
 		this.openedYn = openedYn;
 	}
 
+	public String getLocationId() {
+		return locationId;
+	}
+
+	public void setLocationId(String locationId) {
+		this.locationId = locationId;
+	}
+
+	public String getLocationName() {
+		return locationName;
+	}
+
+	public void setLocationName(String locationName) {
+		this.locationName = locationName;
+	}
+
 	@Override
 	public String toString() {
-		return "ZoneVO [locationId=" + locationId + ", zoneId=" + zoneId + ", seatCnt=" + seatCnt + ", openedYn="
-				+ openedYn + "]";
+		return "zoneByLocNameVO [zoneId=" + zoneId + ", seatCnt=" + seatCnt + ", openedYn=" + openedYn + ", locationId="
+				+ locationId + ", locationName=" + locationName + "]";
 	}
 
 }

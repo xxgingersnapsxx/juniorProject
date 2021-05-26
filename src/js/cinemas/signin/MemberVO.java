@@ -1,10 +1,12 @@
-package js.cinema.signin;
+package js.cinemas.signin;
+
+import java.time.LocalDate;
 
 public class MemberVO {
 	private String memId;
 	private String memPass;
 	private String memName;
-	private String memBir;
+	private LocalDate memBir;
 	private String memAdd1;
 	private String memAdd2;
 	private String memMobile;
@@ -12,7 +14,7 @@ public class MemberVO {
 	private String memDelete;
 	private String locationId;
 
-	public MemberVO(String memId, String memPass, String memName, String memBir, String memAdd1, String memAdd2,
+	public MemberVO(String memId, String memPass, String memName, LocalDate memBir, String memAdd1, String memAdd2,
 			String memMobile, int memMileage, String memDelete, String locationId) {
 		super();
 		this.memId = memId;
@@ -62,11 +64,11 @@ public class MemberVO {
 		this.memName = memName;
 	}
 
-	public String getMemBir() {
+	public LocalDate getMemBir() {
 		return memBir;
 	}
 
-	public void setMemBir(String memBir) {
+	public void setMemBir(LocalDate memBir) {
 		this.memBir = memBir;
 	}
 

@@ -1,4 +1,4 @@
-package js.cinema.signin;
+package js.cinemas.signin;
 
 public class ManagerVO {
 	private String managerId;

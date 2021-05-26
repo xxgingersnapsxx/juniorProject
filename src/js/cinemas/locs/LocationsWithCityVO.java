@@ -1,26 +1,29 @@
 package js.cinemas.locs;
 
-public class LocationsVO {
+public class LocationsWithCityVO {
 	private String locationId;
 	private String cityId;
 	private String locationName;
 	private String locAddr1;
 	private String locAddr2;
+	private String cityName;
 
-	public LocationsVO(String locationName, String locAddr1, String locAddr2) {
+	public LocationsWithCityVO(String locationId, String cityName, String locationName) {
 		super();
+		this.locationId = locationId;
+		this.cityName = cityName;
 		this.locationName = locationName;
-		this.locAddr1 = locAddr1;
-		this.locAddr2 = locAddr2;
 	}
 
-	public LocationsVO(String locationId, String cityId, String locationName, String locAddr1, String locAddr2) {
+	public LocationsWithCityVO(String locationId, String cityId, String locationName, String locAddr1, String locAddr2,
+			String cityName) {
 		super();
 		this.locationId = locationId;
 		this.cityId = cityId;
 		this.locationName = locationName;
 		this.locAddr1 = locAddr1;
 		this.locAddr2 = locAddr2;
+		this.cityName = cityName;
 	}
 
 	public String getLocationId() {
@@ -63,10 +66,18 @@ public class LocationsVO {
 		this.locAddr2 = locAddr2;
 	}
 
+	public String getCityName() {
+		return cityName;
+	}
+
+	public void setCityName(String cityName) {
+		this.cityName = cityName;
+	}
+
 	@Override
 	public String toString() {
 		return "LocationsVO [locationId=" + locationId + ", cityId=" + cityId + ", locationName=" + locationName
-				+ ", locAddr1=" + locAddr1 + ", locAddr2=" + locAddr2 + "]";
+				+ ", locAddr1=" + locAddr1 + ", locAddr2=" + locAddr2 + ", cityName=" + cityName + "]";
 	}
 
 }

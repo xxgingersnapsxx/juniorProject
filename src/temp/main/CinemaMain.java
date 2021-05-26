@@ -1,22 +1,30 @@
 package temp.main;
 
+import java.text.DateFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Scanner;
 
-import js.cinema.signin.ManagerDAO;
-import js.cinema.signin.MemberDao;
-import js.cinema.signin.MemberVO;
+import js.cinemas.locs.LocationsDAO;
+import js.cinemas.locs.LocationsVO;
+import js.cinemas.locs.LocationsWithCityVO;
+import js.cinemas.locs.ZoneVO;
+import js.cinemas.locs.zoneDao;
 import js.cinemas.movies.MoviesDAO;
 import js.cinemas.movies.MoviesVO;
 import js.cinemas.movies.moviesByLocVO;
+import js.cinemas.signin.ManagerDAO;
+import js.cinemas.signin.MemberDao;
+import js.cinemas.signin.MemberVO;
 
 public class CinemaMain {
 
 	public static void main(String[] args) throws Exception {
-		MemberDao memberDao = new js.cinema.signin.MemberDao();
-		ManagerDAO managerDAO = new js.cinema.signin.ManagerDAO();
+		MemberDao memberDao = new js.cinemas.signin.MemberDao();
+		ManagerDAO managerDAO = new js.cinemas.signin.ManagerDAO();
 		MoviesDAO moviesDAO = new js.cinemas.movies.MoviesDAO();
+		zoneDao zoneDao = new js.cinemas.locs.zoneDao();
+		LocationsDAO locDAO = new js.cinemas.locs.LocationsDAO();
 
 		// main logo print
 		System.out.println("        CCCCCCCCCCCCC       GGGGGGGGGGGGGVVVVVVVV           VVVVVVVV");
@@ -60,9 +68,9 @@ public class CinemaMain {
 
 			// 관리자 로그인 성공/실패 분기
 			if (roginResult) {
-				// TODO 관리자 로그인 성공 후 메뉴
+				// 관리자 로그인 성공 후 메뉴
 				System.out.println("(관리자 메뉴)");
-				System.out.println("메뉴 선택 (1. 영화 관리  2. 상영관 관리	 3. 영화관 관리  4. 회원 관리) : ");
+				System.out.print("메뉴 선택 (1. 영화 관리  2. 상영관 관리	 3. 영화관 관리  4. 회원 관리) : ");
 				selectCode = scanner.nextInt();
 				switch (selectCode) {
 				case 1:
@@ -135,27 +143,159 @@ public class CinemaMain {
 					break;
 				case 2:
 					System.out.println("(관리자 메뉴 - 2. 상영관 관리)");
+					System.out.print(
+							"메뉴 선택 (1. 전체 상영관 조회  2. 지역별 상영관 조회  3. 지점별 상영관 조회  4. 상영관 추가  5.  상영관 정보 수정  6. 상영관 삭제) : ");
+					selectCode = scanner.nextInt();
 					switch (selectCode) {
 					case 1:
 						System.out.println("(관리자 메뉴 - 2. 상영관 관리 - 1. 전체 상영관 조회)");
-						System.out.println("");
+						List<ZoneVO> selectAllZoneList = zoneDao.selectAllZoneList();
+						for (ZoneVO zoneVO : selectAllZoneList) {
+							System.out.print(zoneVO.getLocationId() + "\t");
+							System.out.print(zoneVO.getLocationName() + " " + zoneVO.getZoneId() + "관 ");
+							System.out.print(zoneVO.getSeatCnt() + "석\t");
+							System.out.print(zoneVO.getOpenedYn() + "\n");
+						}
 						break;
 					case 2:
-
+						System.out.println("(관리자 메뉴 - 2. 상영관 관리 - 2. 지역별 상영관 조회)");
+						// TODO 지역별 상영관 조회 METHOD 만들기
 						break;
 					case 3:
-
+						System.out.println("(관리자 메뉴 - 2. 상영관 관리 - 3. 지점별 상영관 조회)");
+						System.out.print("조회할 지점명 입력 : ");
+						String locName = scanner.next();
+						List<ZoneVO> selectAllZoneListByLoc = zoneDao.selectAllZoneListByLoc(locName);
+						for (ZoneVO zoneVO : selectAllZoneListByLoc) {
+							System.out.print(zoneVO.getLocationName() + " " + zoneVO.getZoneId() + "관 ");
+							System.out.print(zoneVO.getSeatCnt() + "석\t");
+							System.out.print(zoneVO.getOpenedYn() + "\n");
+						}
 						break;
-
+					case 4:
+						System.out.println("(관리자 메뉴 - 2. 상영관 관리 - 4. 상영관 추가)");
+						System.out.print("상영관 추가 할 지점명 입력 : ");
+						locName = scanner.next();
+						System.out.print("좌석 수 입력 : ");
+						int seatCnt = scanner.nextInt();
+						zoneDao.insertZone(locName, seatCnt);
+						break;
+					case 5:
+						System.out.println("(관리자 메뉴 - 2. 상영관 관리 - 5. 상영관 좌석 수 수정)");
+						System.out.print("상영관 정보 수정 할 지점명 입력 : ");
+						locName = scanner.next();
+						System.out.print("상영관 번호 입력 : ");
+						int zoneId = scanner.nextInt();
+						System.out.print("새 좌석 수 입력 : ");
+						seatCnt = scanner.nextInt();
+						zoneDao.updateZoneSeatCnt(locName, zoneId, seatCnt);
+						break;
+					case 6:
+						System.out.println("(관리자 메뉴 - 2. 상영관 관리 - 6. 상영관 삭제)");
+						System.out.print("삭제할 상영관 지점명 입력 : ");
+						locName = scanner.next();
+						System.out.print("상영관 번호 입력 : ");
+						zoneId = scanner.nextInt();
+						zoneDao.deleteZone(locName, zoneId);
+						break;
 					default:
 						break;
 					}
 					break;
 				case 3:
 					System.out.println("(관리자 메뉴 - 3. 영화관 관리)");
+					System.out.print("메뉴 선택(1. 전체 영화관 조회  2. 지역별 영화관 조회  3. 영화관 추가  4. 영화관 정보 수정  5. 영화관 삭제) : ");
+					selectCode = scanner.nextInt();
+					switch (selectCode) {
+					case 1:
+						System.out.println("(관리자 메뉴 - 3. 영화관 관리 - 1. 전체 영화관 조회)");
+						List<LocationsWithCityVO> allLocationsList = locDAO.selectAllLocationsList();
+						for (LocationsWithCityVO locationsVO : allLocationsList) {
+							System.out.print(locationsVO.getCityName() + '\t');
+							System.out.print(locationsVO.getLocationId() + '\t');
+							System.out.print(locationsVO.getLocationName() + '\n');
+						}
+						break;
+					case 2:
+						System.out.println("(관리자 메뉴 - 3. 영화관 관리 - 2. 지역별 영화관 조회)");
+						System.out.print("지역 입력 : ");
+						String ctName = scanner.next();
+						List<LocationsWithCityVO> allLocListByCity = locDAO.selectAllLocListByCity(ctName);
+						for (LocationsWithCityVO locationsVO : allLocListByCity) {
+							System.out.print(locationsVO.getCityName() + '\t');
+							System.out.print(locationsVO.getLocationId() + '\t');
+							System.out.print(locationsVO.getLocationName() + '\n');
+						}
+						break;
+					case 3:
+						System.out.println("(관리자 메뉴 - 3. 영화관 관리 - 3. 영화관 추가)");
+						scanner.nextLine();
+						System.out.print("지점명 입력 : ");
+						String locationName = scanner.nextLine();
+						System.out.print("주소 1 입력 : ");
+						String locAddr1 = scanner.nextLine();
+						System.out.print("주소 2 입력 : ");
+						String locAddr2 = scanner.nextLine();
+						locDAO.insertLocation(new LocationsVO(locationName, locAddr1, locAddr2));
+						break;
+					case 4:
+						System.out.println("(관리자 메뉴 - 3. 영화관 관리 - 4. 영화관 정보 수정)");
+						// TODO 영화관 정보 수정 메소드 만들기
+						break;
+					case 5:
+						System.out.println("(관리자 메뉴 - 3. 영화관 관리 - 5. 영화관 삭제)");
+						System.out.print("삭제할 영화관 지점명 입력 : ");
+						String locName = scanner.next();
+						locDAO.updateLocationYN(locName);
+						break;
+					default:
+						break;
+					}
 					break;
 				case 4:
-					System.out.println("(관리자 메뉴 - 2. 회원 관리)");
+					System.out.println("(관리자 메뉴 - 4. 회원 관리)");
+					System.out.print("메뉴 선택  (1. 전체 회원 조회  2. 특정 회원 조회 후 마일리지 수정) : ");
+					selectCode = scanner.nextInt();
+					switch (selectCode) {
+					case 1:
+						System.out.println("(관리자 메뉴 - 4. 회원 관리 - 1. 전체 회원 조회)");
+						List<MemberVO> allMemberList = memberDao.selectAllMemberList();
+						for (MemberVO memberVO : allMemberList) {
+							System.out.print(memberVO.getMemId() + "\t");
+							System.out.print(memberVO.getMemName() + "\t");
+							System.out.print(
+									memberVO.getMemBir().format(DateTimeFormatter.ofPattern("yyyy년 MM월 dd일")) + "\t");
+							System.out.print(memberVO.getMemAdd1() + " " + memberVO.getMemAdd2() + "\t");
+							System.out.print(memberVO.getMemMobile() + "\t");
+							System.out.print(memberVO.getMemMileage() + "\t");
+							System.out.print(memberVO.getMemDelete() + "\t");
+							System.out.print(memberVO.getLocationId() + "\n");
+						}
+						break;
+					case 2:
+						System.out.println("(관리자 메뉴 - 4. 회원 관리 - 2. 특정 회원 조회 후 마일리지 수정");
+						System.out.print("조회할 회원 ID 입력 : ");
+						String memId = scanner.next();
+						MemberVO memberMileage = memberDao.selectMemberMileage(memId);
+						System.out.println("회원 " + memId + " 잔여 마일리지 : " + memberMileage.getMemMileage());
+						System.out.print("마일리지 정보 변경을 위해 1 입력 : ");
+						selectCode = scanner.nextInt();
+						switch (selectCode) {
+						case 1:
+							System.out.println("(관리자 메뉴 - 4. 회원 관리 - 2. 특정 회원 조회 1. 회원 정보 수정(마일리지 정보 변경))");
+							System.out.print("추가할 마일리지 입력 : ");
+							int mileage = scanner.nextInt();
+							memberDao.updateMileage(memId, mileage);							
+							memberMileage = memberDao.selectMemberMileage(memId);
+							System.out.println("변경 후 회원 " + memId + " 잔여 마일리지 : " + memberMileage.getMemMileage());
+							break;
+						default:
+							break;
+						}
+						break;
+					default:
+						break;
+					}
 					break;
 				default:
 					System.out.println("관리자 메뉴 1 -1 잘못된 선택");
@@ -169,9 +309,6 @@ public class CinemaMain {
 			break;
 
 		case 2:
-
-			// TODO
-
 			// 회원 로그인 시작
 			System.out.println("회원 로그인");
 			System.out.print("ID 입력 : ");
@@ -183,8 +320,6 @@ public class CinemaMain {
 			// 회원 로그인 성공/실패 분기
 			if (roginResult) {
 				// TODO 회원 로그인 성공 후 메뉴
-				// TODO 로그인 id get으로 받아오기
-				// TODO 뒤로가기 어떻게 구현해...
 				System.out.println("ID : " + loginID + " 로그인 성공!");
 				System.out.println("다음 메뉴 선택 (1. 영화별 예매	2. 극장별 예매 	3. 마일리지 조회) : ");
 				selectCode = scanner.nextInt();

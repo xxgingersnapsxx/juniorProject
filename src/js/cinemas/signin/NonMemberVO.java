@@ -1,4 +1,4 @@
-package js.cinema.signin;
+package js.cinemas.signin;
 
 public class NonMemberVO {
 	private String nMemId;

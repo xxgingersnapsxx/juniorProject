@@ -1,4 +1,4 @@
-package js.cinema.signin;
+package js.cinemas.signin;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
