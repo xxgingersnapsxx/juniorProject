@@ -1,4 +1,4 @@
-package manager;
+package js.cinema.signin;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ManagerDAO {
+
 	public boolean managerLogin(String IDInput, String PassInput) throws Exception { // 매니저 로그인
 		String managerId = null;
 		String managerPw = null;
@@ -20,13 +21,13 @@ public class ManagerDAO {
 		builder.append("  FROM MANAGER");
 		builder.append(" WHERE MANAGER_ID = ?");
 
-		String sql = builder.toString(); 
+		String sql = builder.toString();
 		PreparedStatement statement = connection.prepareStatement(sql);
 
 		statement.setString(1, IDInput);
 
 		List<ManagerVO> list = new ArrayList<ManagerVO>();
-		ResultSet resultSet = statement.executeQuery(); 
+		ResultSet resultSet = statement.executeQuery();
 		ManagerVO vo = null;
 
 		if (resultSet.next()) {

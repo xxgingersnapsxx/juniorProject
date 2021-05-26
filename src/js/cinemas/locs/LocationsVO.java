@@ -1,4 +1,4 @@
-package cinemas;
+package js.cinemas.locs;
 
 public class LocationsVO {
 	private String locationId;
@@ -6,7 +6,7 @@ public class LocationsVO {
 	private String locationName;
 	private String locAddr1;
 	private String locAddr2;
-
+	
 	// private String locTypeId;
 	public LocationsVO(String locationId, String cityId, String locationName, String locAddr1, String locAddr2) {
 		super();

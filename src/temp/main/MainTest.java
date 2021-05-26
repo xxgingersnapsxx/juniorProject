@@ -1,14 +1,14 @@
-package main;
+package temp.main;
 
-import nonMember.NonMemberDAO;
-import nonMember.NonMemberVO;
+import temp.nonMember.NonMemberDAO;
+import temp.nonMember.NonMemberVO;
 
 public class MainTest {
 
 	public static void main(String[] args) throws Exception {
 		// MemberDao dao = new member.MemberDao();
 		// ManagerDAO managerDAO = new manager.ManagerDAO();
-		NonMemberDAO nonMemberDAO = new nonMember.NonMemberDAO();
+		NonMemberDAO nonMemberDAO = new temp.nonMember.NonMemberDAO();
 		// Scanner scanner = new Scanner(System.in);
 
 		/*

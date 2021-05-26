@@ -1,4 +1,4 @@
-package nonMember;
+package js.cinema.signin;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

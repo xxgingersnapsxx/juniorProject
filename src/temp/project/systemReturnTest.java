@@ -1,3 +1,5 @@
+package temp.project;
+
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -8,7 +10,7 @@ public class systemReturnTest {
 		int inputKey = 0;
 
 		while (true) {
-			System.out.print("메뉴 선택 : ");
+			System.out.print("메인 메뉴 선택 : ");
 			try {
 				inputKey = scanner.nextInt();
 				switch (inputKey) {
@@ -44,9 +46,10 @@ public class systemReturnTest {
 				System.out.println("잘못된 문자 입력, 메인 메뉴로 복귀");
 				scanner.next();
 			}
-			scanner.close();
+			if (inputKey == 0) {
+				break;
+			}
 		}
-
-	} 
-
+		scanner.close();
+	}
 }

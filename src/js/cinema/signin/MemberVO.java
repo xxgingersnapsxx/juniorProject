@@ -1,4 +1,4 @@
-package member;
+package js.cinema.signin;
 
 public class MemberVO {
 	private String memId;

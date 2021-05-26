@@ -1,4 +1,4 @@
-package project;
+package temp.project;
 
 import java.util.Random;
 

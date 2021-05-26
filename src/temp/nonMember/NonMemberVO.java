@@ -1,4 +1,4 @@
-package nonMember;
+package temp.nonMember;
 
 public class NonMemberVO {
 	private String nMemId;

@@ -1,4 +1,4 @@
-package project;
+package temp.project;
 
 public class logoOutTest {
 
