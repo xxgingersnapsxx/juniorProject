@@ -19,13 +19,14 @@ public class MoviesDAO {
 		StringBuilder builder = new StringBuilder();
 		builder.append("        SELECT MOVIE_ID, MV_TITLE, DURATION, TYPE_ID, MOVIE_YN");
 		builder.append("          FROM MOVIES");
+		builder.append("         ORDER BY MOVIE_ID");
 		List<MoviesVO> list = new ArrayList<MoviesVO>();
 		ResultSet resultSet = statement.executeQuery(builder.toString());
 		while (resultSet.next()) {
 			int movieId = resultSet.getInt("MOVIE_ID");
 			String mvTitle = resultSet.getString("MV_TITLE");
 			int duration = resultSet.getInt("DURATION");
-			String typeId = resultSet.getString("TYPE_ID");
+			int typeId = resultSet.getInt("TYPE_ID");
 			String movieYn = resultSet.getString("MOVIE_YN");
 			list.add(new MoviesVO(movieId, mvTitle, duration, typeId, movieYn));
 		}
@@ -51,7 +52,7 @@ public class MoviesDAO {
 			int movieId = resultSet.getInt("MOVIE_ID");
 			String mvTitle = resultSet.getString("MV_TITLE");
 			int duration = resultSet.getInt("DURATION");
-			String typeId = resultSet.getString("TYPE_ID");
+			int typeId = resultSet.getInt("TYPE_ID");
 			String movieYn = resultSet.getString("MOVIE_YN");
 			list.add(new MoviesVO(movieId, mvTitle, duration, typeId, movieYn));
 		}
@@ -60,6 +61,33 @@ public class MoviesDAO {
 		connection.close();
 
 		return list;
+	}
+
+	public String returnMvName(int mvId) throws Exception { // movie_id로부터 제목 반환하는 메소드
+		Class.forName("oracle.jdbc.driver.OracleDriver");
+		Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521/xe", "CINEMAPROJECT",
+				"java");
+		StringBuilder builder = new StringBuilder();
+		builder.append("    SELECT MV_TITLE");
+		builder.append("      FROM MOVIES");
+		builder.append("     WHERE MOVIE_ID = ?");
+
+		String sql = builder.toString();
+		PreparedStatement statement = connection.prepareStatement(sql);
+
+		statement.setInt(1, mvId);
+		String mvTitle = null;
+
+		List<MoviesVO> list = new ArrayList<MoviesVO>();
+		ResultSet resultSet = statement.executeQuery();
+		while (resultSet.next()) {
+			mvTitle = resultSet.getString("MV_TITLE");
+		}
+		resultSet.close();
+		statement.close();
+		connection.close();
+
+		return mvTitle;
 	}
 
 	public List<moviesByLocVO> selectNowMVListByLoc(String locName) throws Exception { // 현재 상영중 영화 지점별 조회, 매개변수 : 지점명
@@ -115,11 +143,9 @@ public class MoviesDAO {
 				"java");
 		StringBuilder builder = new StringBuilder();
 		builder.append("        INSERT INTO MOVIES (MOVIE_ID, MV_TITLE");
-		builder.append("                          , MV_O_TITLE, MV_S_TITLE");
-		builder.append("                          , DURATION, TYPE_ID, MOVIE_YN)");
+		builder.append("                          , DURATION, TYPE_ID)");
 		builder.append("        SELECT MAX(MOVIE_ID) + 1, ? ");
-		builder.append("             , NULL, NULL");
-		builder.append("             , ?, NULL, NULL ");
+		builder.append("             , ?, ?");
 		builder.append("          FROM MOVIES ");
 
 		String sql = builder.toString();
@@ -127,6 +153,7 @@ public class MoviesDAO {
 
 		statement.setString(1, vo.getMvTitle());
 		statement.setInt(2, vo.getDuration());
+		statement.setInt(3, vo.getTypeId());
 
 		int result = statement.executeUpdate();
 		if (result > 0) {
@@ -193,4 +220,5 @@ public class MoviesDAO {
 		statement.setString(7, "100010504"); // LOCATION_ID
 		statement.setString(8, "ⓞ①②③④⑤⑥⑦⑧⑨ⓞ①②③④⑤⑥⑦⑧⑨ⓞ①②③④⑤⑥⑦⑧⑨ⓞ①②③④⑤⑥⑦⑧⑨ⓞ①②③④⑤⑥⑦⑧⑨"); // SEATS
 	}
+
 }

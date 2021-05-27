@@ -141,12 +141,8 @@ public class MemberDao {
 		statement.setInt(1, mileage);
 		statement.setString(2, memId);
 
-		int result = statement.executeUpdate();
-		if (result > 0) {
-			System.out.println("수정 성공!");
-		} else {
-			System.out.println("수정 실패!");
-		}
+		statement.executeUpdate();
+
 		statement.close();
 		connection.close();
 	}

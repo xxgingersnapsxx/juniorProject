@@ -1,10 +1,15 @@
 package temp.main;
 
-import java.text.DateFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Scanner;
 
+import js.cinemas.booking.BookingDAO;
+import js.cinemas.booking.MemTixHistDAO;
+import js.cinemas.booking.MemTixHistVO;
+import js.cinemas.booking.PriceDAO;
+import js.cinemas.booking.seatDAO;
+import js.cinemas.booking.tixView;
 import js.cinemas.locs.LocationsDAO;
 import js.cinemas.locs.LocationsVO;
 import js.cinemas.locs.LocationsWithCityVO;
@@ -12,6 +17,11 @@ import js.cinemas.locs.ZoneVO;
 import js.cinemas.locs.zoneDao;
 import js.cinemas.movies.MoviesDAO;
 import js.cinemas.movies.MoviesVO;
+import js.cinemas.movies.MvTypeDao;
+import js.cinemas.movies.MvTypeVO;
+import js.cinemas.movies.NowShowingDAO;
+import js.cinemas.movies.NowShowingInsertVO;
+import js.cinemas.movies.NowShowingVO;
 import js.cinemas.movies.moviesByLocVO;
 import js.cinemas.signin.ManagerDAO;
 import js.cinemas.signin.MemberDao;
@@ -25,6 +35,14 @@ public class CinemaMain {
 		MoviesDAO moviesDAO = new js.cinemas.movies.MoviesDAO();
 		zoneDao zoneDao = new js.cinemas.locs.zoneDao();
 		LocationsDAO locDAO = new js.cinemas.locs.LocationsDAO();
+		NowShowingDAO nowShowingDAO = new NowShowingDAO();
+		BookingDAO bookingDAO = new BookingDAO();
+		LocationsDAO locationsDAO = new LocationsDAO();
+		seatDAO seatDAO = new seatDAO();
+		MemTixHistDAO memTixHistDAO = new MemTixHistDAO();
+		tixView tixView = new tixView();
+		PriceDAO priceDAO = new PriceDAO();
+		MvTypeDao mvTypeDao = new MvTypeDao();
 
 		// main logo print
 		System.out.println("        CCCCCCCCCCCCC       GGGGGGGGGGGGGVVVVVVVV           VVVVVVVV");
@@ -47,7 +65,7 @@ public class CinemaMain {
 		System.out.println();
 		System.out.println();
 
-		System.out.print("LOGIN 선택 (1. 관리자 	2.회원 로그인 	3. 비회원 예매) : ");
+		System.out.print("LOGIN 선택 (1. 관리자 	2.회원 로그인 	3. 비회원 예매  4. 회원가입) : ");
 		Scanner scanner = new Scanner(System.in);
 		int selectCode = scanner.nextInt(); // LOGIN 선택
 		String loginID = null;
@@ -70,7 +88,7 @@ public class CinemaMain {
 			if (roginResult) {
 				// 관리자 로그인 성공 후 메뉴
 				System.out.println("(관리자 메뉴)");
-				System.out.print("메뉴 선택 (1. 영화 관리  2. 상영관 관리	 3. 영화관 관리  4. 회원 관리) : ");
+				System.out.print("메뉴 선택 (1. 영화 관리  2. 상영관 관리	 3. 영화관 관리  4. 상영 일정 관리  5. 회원 관리) : ");
 				selectCode = scanner.nextInt();
 				switch (selectCode) {
 				case 1:
@@ -123,9 +141,18 @@ public class CinemaMain {
 						System.out.print("등록할 영화 제목 입력 : ");
 						scanner.nextLine();
 						String mvTitle = scanner.nextLine();
+						System.out.println();
+
+						List<MvTypeVO> selectMvTypeList = mvTypeDao.selectMvTypeList();
+						for (MvTypeVO mvTypeVO : selectMvTypeList) {
+							System.out.println(mvTypeVO.getTypeId() + " " + mvTypeVO.getTypeName());
+						}
+
+						System.out.print("등록할 영화 상영 타입 입력 : ");
+						int mvType = scanner.nextInt();
 						System.out.print("등록할 영화 상영 길이 입력 : ");
 						int duration = scanner.nextInt();
-						moviesDAO.insertMovies(new MoviesVO(mvTitle, duration));
+						moviesDAO.insertMovies(new MoviesVO(mvTitle, mvType, duration));
 						break;
 					case 5:
 						System.out.println("(관리자 메뉴 - 1. 영화 관리 - 5. 영화 정보 수정)");
@@ -184,6 +211,14 @@ public class CinemaMain {
 						System.out.println("(관리자 메뉴 - 2. 상영관 관리 - 5. 상영관 좌석 수 수정)");
 						System.out.print("상영관 정보 수정 할 지점명 입력 : ");
 						locName = scanner.next();
+						System.out.println();
+						selectAllZoneListByLoc = zoneDao.selectAllZoneListByLoc(locName);
+						for (ZoneVO zoneVO : selectAllZoneListByLoc) {
+							System.out.print(zoneVO.getLocationName() + " " + zoneVO.getZoneId() + "관 ");
+							System.out.print(zoneVO.getSeatCnt() + "석\t");
+							System.out.print(zoneVO.getOpenedYn() + "\n");
+						}
+						System.out.println();
 						System.out.print("상영관 번호 입력 : ");
 						int zoneId = scanner.nextInt();
 						System.out.print("새 좌석 수 입력 : ");
@@ -220,9 +255,8 @@ public class CinemaMain {
 						System.out.println("(관리자 메뉴 - 3. 영화관 관리 - 2. 지역별 영화관 조회)");
 						System.out.print("지역 입력 : ");
 						String ctName = scanner.next();
-						List<LocationsWithCityVO> allLocListByCity = locDAO.selectAllLocListByCity(ctName);
+						List<LocationsWithCityVO> allLocListByCity = locDAO.selectAllLocListByAddr(ctName);
 						for (LocationsWithCityVO locationsVO : allLocListByCity) {
-							System.out.print(locationsVO.getCityName() + '\t');
 							System.out.print(locationsVO.getLocationId() + '\t');
 							System.out.print(locationsVO.getLocationName() + '\n');
 						}
@@ -253,12 +287,154 @@ public class CinemaMain {
 					}
 					break;
 				case 4:
-					System.out.println("(관리자 메뉴 - 4. 회원 관리)");
+					System.out.println("(관리자 메뉴 - 4. 상영 일정 관리)");
+					System.out.print("메뉴 선택  (1. 상영 일정 조회  2. 상영 일정 추가) : ");
+					selectCode = scanner.nextInt();
+					switch (selectCode) {
+					case 1:
+						System.out.println("(관리자 메뉴 - 4. 상영 일정 관리 - 1. 상영 일정 조회 )");
+						System.out.print("메뉴 선택  (1. 지점별 상영 일정 조회  2. 지점별 상영관별 상영 일정 조회  3. 지점별 영화별 상영 일정 조회) : ");
+						selectCode = scanner.nextInt();
+						switch (selectCode) {
+						case 1:
+							System.out.println("(관리자 메뉴 - 4. 상영 일정 관리 - 1. 상영 일정 조회 - 1. 지점별 상영 일정 조회  )");
+							System.out.print("조회할 지점명 입력 : ");
+							String locName = scanner.next();
+
+							List<NowShowingVO> selectNowShowingListByLoc = nowShowingDAO
+									.selectNowShowingListByLoc(locName);
+							for (NowShowingVO nowShowingVO : selectNowShowingListByLoc) {
+								System.out.print(nowShowingVO.getShowId() + "\t");
+								System.out.print(moviesDAO.returnMvName(nowShowingVO.getMovieId()) + "\t");
+								System.out.print(nowShowingVO.getStartsAt()
+										.format(DateTimeFormatter.ofPattern("yyyy년MM월dd일 HH:mm")) + " - ");
+								System.out.print(
+										nowShowingVO.getEndsAt().format(DateTimeFormatter.ofPattern("HH:mm")) + "\t");
+								System.out.print(nowShowingVO.getZoneId() + "관\t");
+								// System.out.print(nowShowingDAO.availableSeatCnt(nowShowingVO.getShowId()) +
+								// "관\n"); // 잔여 좌석
+								int seatCnt = nowShowingDAO.availableSeatCnt(nowShowingVO.getShowId());
+								if (seatCnt == 0) {
+									System.out.println(nowShowingDAO.ifSoldOut(seatCnt));
+								} else {
+									System.out.println(seatCnt + "/" + nowShowingDAO.SeatCnt(nowShowingVO.getShowId(),
+											nowShowingVO.getLocationId()));
+								}
+							}
+
+							break;
+						case 2:
+							System.out.println("(관리자 메뉴 - 4. 상영 일정 관리 - 1. 상영 일정 조회 - 2. 지점별 상영관별 상영 일정 조회  )");
+
+							System.out.print("조회할 지점명 입력 : ");
+							locName = scanner.next();
+							System.out.print("조회할 상영관 입력 : ");
+							int zoneId = scanner.nextInt();
+							List<NowShowingVO> selectNowShowingListByLocZone = nowShowingDAO
+									.selectNowShowingListByLocZone(locName, zoneId);
+							for (NowShowingVO nowShowingVO : selectNowShowingListByLocZone) {
+								System.out.print(nowShowingVO.getShowId() + "\t");
+								System.out.print(moviesDAO.returnMvName(nowShowingVO.getMovieId()) + "\t");
+								System.out.print(nowShowingVO.getStartsAt()
+										.format(DateTimeFormatter.ofPattern("yyyy년MM월dd일 HH:mm")) + " - ");
+								System.out.print(
+										nowShowingVO.getEndsAt().format(DateTimeFormatter.ofPattern("HH:mm")) + "\t");
+								System.out.print(nowShowingVO.getZoneId() + "관\t");
+								// System.out.print(nowShowingDAO.availableSeatCnt(nowShowingVO.getShowId()) +
+								// "관\n"); // 잔여 좌석
+								int seatCnt = nowShowingDAO.availableSeatCnt(nowShowingVO.getShowId());
+								if (seatCnt == 0) {
+									System.out.println(nowShowingDAO.ifSoldOut(seatCnt));
+								} else {
+									System.out.println(seatCnt + "/" + nowShowingDAO.SeatCnt(nowShowingVO.getShowId(),
+											nowShowingVO.getLocationId()));
+								}
+							}
+							break;
+						case 3:
+							System.out.println("(관리자 메뉴 - 4. 상영 일정 관리 - 1. 상영 일정 조회 - 3. 지점별 영화별 상영 일정 조회  )");
+							break;
+
+						default:
+							break;
+						}
+						break;
+					case 2:
+						System.out.println("(관리자 메뉴 - 4. 상영 일정 관리 - 2. 상영 일정 추가 )");
+						System.out.println();
+						System.out.print("지점명 입력 : ");
+						String locName = scanner.next();
+
+						// 지점별 상영관 list 출력
+						List<ZoneVO> selectAllZoneListByLoc = zoneDao.selectAllZoneListByLoc(locName);
+						for (ZoneVO zoneVO : selectAllZoneListByLoc) {
+							System.out.print(zoneVO.getLocationName() + " " + zoneVO.getZoneId() + "관 ");
+							System.out.print(zoneVO.getSeatCnt() + "석\t");
+							System.out.print(zoneVO.getOpenedYn() + "\n");
+						}
+
+						System.out.println();
+						System.out.print("상영관 입력 : ");
+						int zoneId = scanner.nextInt();
+
+						// 전체 추가 가능한 영화 리스트 출력
+						System.out.println();
+						System.out.println("*현재 상영중 영화 목록*");
+						List<MoviesVO> allMoviesList = moviesDAO.selectAllMoviesList();
+						for (MoviesVO moviesVO : allMoviesList) {
+							System.out.print(moviesVO.getMovieId() + "\t");
+							// TODO lpad같은거 찾아서 오라클에서 수정하기
+							System.out.print(moviesVO.getMvTitle() + "\t\t\t");
+							System.out.print(moviesVO.getDuration() + "\t");
+							System.out.print(moviesVO.getMovieYn() + "\n");
+						}
+
+						System.out.println();
+						System.out.print("추가 할 영화 ID 입력 : ");
+						int movieId = scanner.nextInt();
+
+						System.out.println();
+						System.out.print("시작 날짜 입력 (YYYYMMDD) : ");
+						int startDate = scanner.nextInt(); // INT 길이 때문에 그럼
+						System.out.print("시작 시간 입력 (HH24MI) : ");
+						int startTime = scanner.nextInt(); // INT 길이 때문에 그럼
+						String startTimeToString = String.valueOf(startTime);
+						// FIXME : 시간 길이 안맞음
+						if (startTime < 1000) {
+							startTimeToString = "0" + String.valueOf(startTime);
+						}
+						String startsAt = String.valueOf(startDate) + startTimeToString; // INT 길이 때문에 그럼
+
+						// System.out.println("TIME ID : " + bookingDAO.returnTimeID(startsAt));
+						// System.out.println("TYPE ID : " + bookingDAO.returnTypeID(movieId));
+						// System.out.println("dayttype : " +
+						// bookingDAO.returnDayType(bookingDAO.returnDay(startsAt)));
+						// System.out.println("day : " + bookingDAO.returnDay(startsAt) );
+						// System.out.println("price id : "
+						// +bookingDAO.returnPriceId(bookingDAO.returnTimeID(startsAt),
+						// bookingDAO.returnTypeID(movieId),
+						// bookingDAO.returnDayType(bookingDAO.returnDay(startsAt))));
+						nowShowingDAO.insertMovieSchedule(
+								new NowShowingInsertVO(nowShowingDAO.createNewShowId(), movieId, startsAt, startsAt,
+										bookingDAO.returnPriceId(bookingDAO.returnTimeID(startsAt),
+												bookingDAO.returnTypeID(movieId),
+												bookingDAO.returnDayType(bookingDAO.returnDay(startsAt))),
+										zoneId, locationsDAO.returnLocId(locName),
+										nowShowingDAO.generateSeatsString(locationsDAO.returnLocId(locName), zoneId)));
+						break;
+
+					default:
+						break;
+					}
+
+					break;
+				case 5:
+					System.out.println("(관리자 메뉴 - 5. 회원 관리)");
 					System.out.print("메뉴 선택  (1. 전체 회원 조회  2. 특정 회원 조회 후 마일리지 수정) : ");
 					selectCode = scanner.nextInt();
 					switch (selectCode) {
 					case 1:
-						System.out.println("(관리자 메뉴 - 4. 회원 관리 - 1. 전체 회원 조회)");
+						System.out.println("(관리자 메뉴 - 5. 회원 관리 - 1. 전체 회원 조회)");
 						List<MemberVO> allMemberList = memberDao.selectAllMemberList();
 						for (MemberVO memberVO : allMemberList) {
 							System.out.print(memberVO.getMemId() + "\t");
@@ -285,7 +461,7 @@ public class CinemaMain {
 							System.out.println("(관리자 메뉴 - 4. 회원 관리 - 2. 특정 회원 조회 1. 회원 정보 수정(마일리지 정보 변경))");
 							System.out.print("추가할 마일리지 입력 : ");
 							int mileage = scanner.nextInt();
-							memberDao.updateMileage(memId, mileage);							
+							memberDao.updateMileage(memId, mileage);
 							memberMileage = memberDao.selectMemberMileage(memId);
 							System.out.println("변경 후 회원 " + memId + " 잔여 마일리지 : " + memberMileage.getMemMileage());
 							break;
@@ -321,27 +497,169 @@ public class CinemaMain {
 			if (roginResult) {
 				// TODO 회원 로그인 성공 후 메뉴
 				System.out.println("ID : " + loginID + " 로그인 성공!");
-				System.out.println("다음 메뉴 선택 (1. 영화별 예매	2. 극장별 예매 	3. 마일리지 조회) : ");
+				System.out.print("다음 메뉴 선택 (1. 예매	2. 예매 내역 조회  3. 예매 취소  4. 마일리지 조회) : ");
 				selectCode = scanner.nextInt();
 				switch (selectCode) {
 				case 1:
-					// TODO
+					System.out.println("(회원메뉴 - 1. 예매)");
+					// 지점별 예매 가능 영화 목록
+					System.out.print("예매할 지점명 입력 : ");
+					String locName = scanner.next();
+
+					List<NowShowingVO> selectNowShowingListByLoc = nowShowingDAO.selectNowShowingListByLoc(locName);
+
+					for (NowShowingVO nowShowingVO : selectNowShowingListByLoc) {
+						// 예매 불가한 상영관 건너뛰기
+						if (nowShowingVO.getShowYn().equals("N")) {
+							continue;
+						}
+						System.out.print(nowShowingVO.getShowId() + "\t");
+						System.out.print(moviesDAO.returnMvName(nowShowingVO.getMovieId()) + "\t");
+						System.out.print(
+								nowShowingVO.getStartsAt().format(DateTimeFormatter.ofPattern("yyyy년MM월dd일 HH:mm"))
+										+ " - ");
+						System.out.print(nowShowingVO.getEndsAt().format(DateTimeFormatter.ofPattern("HH:mm")) + "\t");
+						System.out.print(nowShowingVO.getZoneId() + "관\t");
+						int seatCnt = nowShowingDAO.availableSeatCnt(nowShowingVO.getShowId());
+						if (seatCnt == 0) {
+							System.out.println(nowShowingDAO.ifSoldOut(seatCnt));
+						} else {
+							System.out.println(seatCnt + "/"
+									+ nowShowingDAO.SeatCnt(nowShowingVO.getShowId(), nowShowingVO.getLocationId()));
+						}
+					}
+					System.out.println();
+					System.out.print("예매할 영화 번호 선택 : ");
+					int showId = scanner.nextInt();
+					System.out.println();
+
+					// 해당 영화 좌석 정보 출력
+					seatDAO.printSeat(locName, nowShowingDAO.returnZoneId(showId), showId);
+					System.out.println();
+					System.out.print("예매할 좌석 번호 선택 : ");
+					String seatNum = scanner.next();
+
+					// 좌석 정보 변경
+					System.out.println();
+					seatDAO.updateSeatStatus(seatDAO.SeatString(
+							seatDAO.getSeatData(locName, nowShowingDAO.returnZoneId(showId), showId), seatNum), showId);
+					System.out.println();
+
+					// 예매 후 좌석 출력
+
+					seatDAO.printSeat(locName, nowShowingDAO.returnZoneId(showId), showId);
+					System.out.println();
+
+					String dateTime = null;
+					int zone = 0;
+					int price = 0;
+					String location = null;
+					int mvId = 0;
+					// returnTixId
+
+					for (NowShowingVO nowShowingVO : selectNowShowingListByLoc) {
+						dateTime = nowShowingVO.getStartsAt().format(DateTimeFormatter.ofPattern("yyyy년MM월dd일 HH:mm"))
+								+ " - " + nowShowingVO.getEndsAt().format(DateTimeFormatter.ofPattern("HH:mm"));
+						zone = nowShowingVO.getZoneId();
+						location = locationsDAO.returnLocName(nowShowingVO.getLocationId());
+						price = priceDAO.returnPriceAmt(nowShowingVO.getPriceId());
+						mvId = nowShowingVO.getMovieId();
+					}
+					// tixhist에 데이터 입력
+					memTixHistDAO.insertMemTixHist(loginID, showId, seatNum);
+
+					// 마일리지 지급 : 10%
+					int mileage = (int) (price * 0.1);
+					memberDao.updateMileage(loginID, mileage);
+
+					// 티켓 출력 보여주기
+					int tixNum = memTixHistDAO.returnTixId(loginID, showId, seatNum);
+					tixView.tixPrint(moviesDAO.returnMvName(mvId), dateTime, zone, seatNum, price, location, tixNum);
 					break;
 				case 2:
-					// TODO
-					// TODO : 지점별 상영 영화 조회 Method 만들어서 삽입, 리스트 sysout으로 보여주기
-					// TODO : show_id scanner로 입력받기
-					// TODO : show_id로 좌석 정보 띄워주기
-					// TODO : 좌석 입력받기
-					// TODO : 입력확정
-					// TODO : tixhist에 데이터 입력
-					// TODO : 티켓 보여주기
+					System.out.println("(회원메뉴 - 2. 예매 내역 조회)");
+					System.out.print("다음 메뉴 선택 (1. 출력 가능한 티켓 조회  2. 전체 예매 내역 조회  3. 취소 내역 조회) : ");
+					selectCode = scanner.nextInt();
+					switch (selectCode) {
+					case 1:
+						System.out.println("(회원메뉴 - 2. 예매 내역 조회 - 1. 출력 가능한 티켓 조회)");
+						// FIXME view 다시 보고 수정
+						List<MemTixHistVO> selectMemTixHist = memTixHistDAO.selectAvaMemTixHist(loginID);
+						for (MemTixHistVO memTixHistVO : selectMemTixHist) {					
+							System.out.print(memTixHistVO.getMemTixHistId() + "\t");
+							System.out.print(nowShowingDAO.returnRunDate(memTixHistVO.getShowId())
+									.format(DateTimeFormatter.ofPattern("yyyy년MM월dd일 HH:mm")) + "\t");
+							System.out
+							.print(moviesDAO.returnMvName(nowShowingDAO.returnMovieId(memTixHistVO.getShowId()))
+									+ "\t");
+							System.out.print(
+									locationsDAO.returnLocName(nowShowingDAO.returnLocID(memTixHistVO.getShowId()))
+									+ "\t");
+							System.out.print(nowShowingDAO.returnZoneId(memTixHistVO.getShowId()) + "관\t");
+							System.out.println(memTixHistVO.getSeatNo() + "\t");							
+						}
+					
+						break;
+					case 2:
+						System.out.println("(회원메뉴 - 2. 예매 내역 조회 - 2. 전체 예매 내역 조회)");
+						selectMemTixHist = memTixHistDAO.selectMemTixHist(loginID);
+						for (MemTixHistVO memTixHistVO : selectMemTixHist) {
+							if (memTixHistVO.getCancelYn().equals("Y")) {
+								continue;
+							}
+							System.out.print(memTixHistVO.getMemTixHistId() + "\t");
+							System.out.print(nowShowingDAO.returnRunDate(memTixHistVO.getShowId())
+									.format(DateTimeFormatter.ofPattern("yyyy년MM월dd일 HH:mm")) + "\t");
+							System.out
+									.print(moviesDAO.returnMvName(nowShowingDAO.returnMovieId(memTixHistVO.getShowId()))
+											+ "\t");
+							System.out.print(
+									locationsDAO.returnLocName(nowShowingDAO.returnLocID(memTixHistVO.getShowId()))
+											+ "\t");
+							System.out.print(nowShowingDAO.returnZoneId(memTixHistVO.getShowId()) + "관\t");
+							System.out.println(memTixHistVO.getSeatNo() + "\t");
+						}
+
+						break;
+					case 3:
+						System.out.println("(회원메뉴 - 2. 예매 내역 조회 - 3. 취소 내역 조회)");
+						selectMemTixHist = memTixHistDAO.selectMemTixHist(loginID);
+						for (MemTixHistVO memTixHistVO : selectMemTixHist) {
+							if (memTixHistVO.getCancelYn().equals("N")) {
+								continue;
+							}
+							System.out.print(memTixHistVO.getMemTixHistId() + "\t");
+							System.out.print(nowShowingDAO.returnRunDate(memTixHistVO.getShowId())
+									.format(DateTimeFormatter.ofPattern("yyyy년MM월dd일 HH:mm")) + "\t");
+							System.out
+									.print(moviesDAO.returnMvName(nowShowingDAO.returnMovieId(memTixHistVO.getShowId()))
+											+ "\t");
+							System.out.print(
+									locationsDAO.returnLocName(nowShowingDAO.returnLocID(memTixHistVO.getShowId()))
+											+ "\t");
+							System.out.print(nowShowingDAO.returnZoneId(memTixHistVO.getShowId()) + "관\t");
+							System.out.println(memTixHistVO.getSeatNo() + "\t");
+						}
+
+						break;
+
+					default:
+						break;
+					}
+
 					break;
-				case 3: // 보유 마일리지 조회
+				case 3:
+					System.out.println("(회원메뉴 -  3. 예매 취소)");
+
+					break;
+				case 4:
+					System.out.println("(회원메뉴 - 4. 마일리지 조회)");
 					MemberVO vo = memberDao.selectMemberMileage(loginID);
 					System.out.print("보유 마일리지 : " + vo.getMemMileage());
 					break;
+
 				default:
+
 					break;
 				}
 
@@ -352,6 +670,10 @@ public class CinemaMain {
 			break;
 		case 3:
 			System.out.println("비회원 예매");
+			// TODO
+			break;
+		case 4:
+			System.out.println("회원 가입");
 			// TODO
 			break;
 		default:

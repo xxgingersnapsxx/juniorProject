@@ -35,18 +35,15 @@ public class LocationsDAO {
 		return list;
 	}
 
-	// FIXME 여기부터 하기
-	public List<LocationsWithCityVO> selectAllLocListByCity(String ctName) throws Exception { // 영화관 목록 도시별 조회, 매개변수 :
-																								// 도시명
+	public List<LocationsWithCityVO> selectAllLocListByAddr(String ctName) throws Exception { // 영화관 목록 주소로 조회
 		Class.forName("oracle.jdbc.driver.OracleDriver");
 		Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521/xe", "CINEMAPROJECT",
 				"java");
 
 		StringBuilder builder = new StringBuilder();
-		builder.append("        SELECT LOCATIONS.LOCATION_ID, CITIES.CITY_NAME, LOCATIONS.LOCATION_NAME");
-		builder.append("              FROM LOCATIONS, CITIES");
-		builder.append("             WHERE LOCATIONS.CITY_ID = CITIES.CITY_ID");
-		builder.append("               AND CITIES.CITY_NAME = ?");
+		builder.append("        SELECT LOCATIONS.LOCATION_ID, LOCATIONS.LOCATION_NAME");
+		builder.append("              FROM LOCATIONS ");
+		builder.append("             WHERE LOC_ADDR1 LIKE '%'||?||'%'");
 
 		String sql = builder.toString();
 		PreparedStatement statement = connection.prepareStatement(sql);
@@ -56,16 +53,48 @@ public class LocationsDAO {
 		List<LocationsWithCityVO> list = new ArrayList<LocationsWithCityVO>();
 		ResultSet resultSet = statement.executeQuery();
 		while (resultSet.next()) {
-			String locationId = resultSet.getString("LOCATION_ID");
-			String cityName = resultSet.getString("CITY_NAME");
+			String locationId = resultSet.getString("LOCATION_ID");		
 			String locationName = resultSet.getString("LOCATION_NAME");
-			list.add(new LocationsWithCityVO(locationId, cityName, locationName));
+			list.add(new LocationsWithCityVO(locationId, locationName));
 		}
 
 		resultSet.close();
 		statement.close();
 		connection.close();
 
+		return list;
+	}
+
+	public List<LocationsWithCityVO> selectAllLocListByCity(String ctName) throws Exception { // 영화관 목록 도시별 조회, 매개변수 :
+		// 도시명
+		Class.forName("oracle.jdbc.driver.OracleDriver");
+		Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521/xe", "CINEMAPROJECT",
+				"java");
+		
+		StringBuilder builder = new StringBuilder();
+		builder.append("        SELECT LOCATIONS.LOCATION_ID, CITIES.CITY_NAME, LOCATIONS.LOCATION_NAME");
+		builder.append("              FROM LOCATIONS, CITIES");
+		builder.append("             WHERE LOCATIONS.CITY_ID = CITIES.CITY_ID");
+		builder.append("               AND CITIES.CITY_NAME LIKE '%'||?||'%'");
+		
+		String sql = builder.toString();
+		PreparedStatement statement = connection.prepareStatement(sql);
+		
+		statement.setString(1, ctName);
+		
+		List<LocationsWithCityVO> list = new ArrayList<LocationsWithCityVO>();
+		ResultSet resultSet = statement.executeQuery();
+		while (resultSet.next()) {
+			String locationId = resultSet.getString("LOCATION_ID");
+			String cityName = resultSet.getString("CITY_NAME");
+			String locationName = resultSet.getString("LOCATION_NAME");
+			list.add(new LocationsWithCityVO(locationId, cityName, locationName));
+		}
+		
+		resultSet.close();
+		statement.close();
+		connection.close();
+		
 		return list;
 	}
 
@@ -95,6 +124,34 @@ public class LocationsDAO {
 		connection.close();
 
 		return locationId;
+	}
+
+	public String returnLocName(String locId) throws Exception { // 지점 location_name 리턴 메소드
+		Class.forName("oracle.jdbc.driver.OracleDriver");
+		Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521/xe", "CINEMAPROJECT",
+				"java");
+
+		StringBuilder builder = new StringBuilder();
+		builder.append("      SELECT LOCATION_NAME");
+		builder.append("        FROM LOCATIONS");
+		builder.append("       WHERE LOCATION_ID LIKE ?");
+
+		String sql = builder.toString();
+		PreparedStatement statement = connection.prepareStatement(sql);
+
+		statement.setString(1, locId);
+
+		String locationName = null;
+		ResultSet resultSet = statement.executeQuery();
+		while (resultSet.next()) {
+			locationName = resultSet.getString("LOCATION_NAME");
+		}
+
+		resultSet.close();
+		statement.close();
+		connection.close();
+
+		return locationName;
 	}
 
 	public void insertLocation(LocationsVO vo) throws Exception { // 영화관 추가

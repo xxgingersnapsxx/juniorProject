@@ -7,7 +7,7 @@ public class MoviesVO {
 	private String mvOTitle;
 	private String mvSTitle;
 	private int duration;
-	private String typeId;
+	private int typeId;
 	private String movieYn;
 
 	public MoviesVO(int movieId, String movieYn) {
@@ -16,13 +16,15 @@ public class MoviesVO {
 		this.movieYn = movieYn;
 	}
 
-	public MoviesVO(String mvTitle, int duration) {
+	public MoviesVO(String mvTitle, int typeId, int duration) {
 		super();
 		this.mvTitle = mvTitle;
+		this.typeId = typeId;
 		this.duration = duration;
 	}
 
-	public MoviesVO(int movieId, String mvTitle, int duration, String typeId, String movieYn) {
+
+	public MoviesVO(int movieId, String mvTitle, int duration, int typeId, String movieYn) {
 		super();
 		this.movieId = movieId;
 		this.mvTitle = mvTitle;
@@ -31,7 +33,7 @@ public class MoviesVO {
 		this.movieYn = movieYn;
 	}
 
-	public MoviesVO(int movieId, String mvTitle, String mvOTitle, String mvSTitle, int duration, String typeId,
+	public MoviesVO(int movieId, String mvTitle, String mvOTitle, String mvSTitle, int duration, int typeId,
 			String movieYn) {
 		super();
 		this.movieId = movieId;
@@ -83,11 +85,11 @@ public class MoviesVO {
 		this.duration = duration;
 	}
 
-	public String getTypeId() {
+	public int getTypeId() {
 		return typeId;
 	}
 
-	public void setTypeId(String typeId) {
+	public void setTypeId(int typeId) {
 		this.typeId = typeId;
 	}
 

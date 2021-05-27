@@ -4,22 +4,19 @@ import java.util.HashSet;
 import java.util.Scanner;
 import java.util.Set;
 
-public class seatTest {
+import js.cinemas.booking.seatDAO;
 
-	public static void main(String[] args) {
+public class seatTestEdit {
 
-		// System.out.println("①②③④⑤⑥⑦⑧⑨⑩● ");
-		// System.out.println("⓵⓶⓷⓸⓹⓺⓻⓼⓽⓾");
-		// System.out.println("❶❷❸❹❺❻❼❽❾❿");
-		// System.out.println("➊➋➌➍➎➏➐➑➒➓");
-
+	public static void main(String[] args) throws Exception {
+		seatDAO seatDAO = new seatDAO();
 		int numberOfSeat = 50;
 		int col = 10;
 		int row = numberOfSeat / col;
 
 		String[][] seat = new String[row][col];
 
-		String seatOracleData = "⓪①②③④⑤⑥⑦⑧⑨⓪①②③④⑤⑥⑦⑧⑨⓪①②③④⑤⑥⑦⑧⑨⓪①②③④⑤⑥⑦⑧⑨⓪①②③④⑤⑥⑦⑧⑨";
+		String seatOracleData = seatDAO.returnOriginalSeatString("강남", 2, 2);
 		String rowAlphabet = "ⓐⓑⓒⓓⓔⓕⓖⓗⓘⓙⓚⓛⓜⓝⓞⓟⓠⓡⓢⓣⓤⓥⓦⓧⓨⓩ";
 
 		System.out.println("      screen       ");
@@ -39,30 +36,21 @@ public class seatTest {
 		System.out.println();
 		System.out.println();
 
-		seat[2][3] = "●"; // c3
 
-		// for (int i = 0; i < seat.length; i++) {
-		// System.out.print(rowAlphabet.substring(i, i + 1) + " ");
-		// for (int j = 0; j < seat[i].length; j++) {
-		// System.out.print(seat[i][j]);
-		// }
-		// System.out.println();
-		// }
-		// String finalSeatData = seatTest.deepToString(seat);
-		// System.out.println(finalSeatData);
 
 		// 알파벳별 숫자
+		extracted(seat, seatOracleData, rowAlphabet);
+
+	}
+
+	private static void extracted(String[][] seat, String seatOracleData, String rowAlphabet) {
 		char rowAlphbet = 'A';
 		int getColNum = 1;
 
-		// System.out.println((int)rowAlphbet - 64);
 		int seatNumToChange = Integer.parseInt(String.valueOf((int) rowAlphbet - 64) + String.valueOf(getColNum));
-		// System.out.println(seatNumToChange);
+
 		// 좌석 string 교체
 		StringBuilder builder = new StringBuilder(seatOracleData);
-		// builder.setCharAt(seatNumToChange, '❶');
-		// seatOracleData = builder.toString();
-		// System.out.println(seatOracleData);
 
 		// scanner로 입력받아 자리 바꾸기 Test
 		Scanner scanner = new Scanner(System.in);
@@ -74,7 +62,6 @@ public class seatTest {
 		seatNumToChange = Integer.parseInt(String.valueOf((int) rowAlphbet - 65) + String.valueOf(getColNum));
 		builder.setCharAt(seatNumToChange, '●');
 		seatOracleData = builder.toString();
-		// System.out.println(seatOracleData);
 
 		// 자리 바꾼 뒤 출력
 		System.out.println();
@@ -91,7 +78,6 @@ public class seatTest {
 			}
 			System.out.println();
 		}
-
 	}
 
 	public static String deepToString(Object[] a) {

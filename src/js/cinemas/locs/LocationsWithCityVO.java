@@ -8,6 +8,12 @@ public class LocationsWithCityVO {
 	private String locAddr2;
 	private String cityName;
 
+	public LocationsWithCityVO(String locationId, String locationName) {
+		super();
+		this.locationId = locationId;
+		this.locationName = locationName;
+	}
+
 	public LocationsWithCityVO(String locationId, String cityName, String locationName) {
 		super();
 		this.locationId = locationId;

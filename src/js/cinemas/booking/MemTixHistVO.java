@@ -1,6 +1,7 @@
 package js.cinemas.booking;
 
 public class MemTixHistVO {
+	private int memTixHistId;
 	private String memId;
 	private int showId;
 	private String seatNo;
@@ -8,6 +9,15 @@ public class MemTixHistVO {
 
 	public MemTixHistVO(String memId, int showId, String seatNo, String cancelYn) {
 		super();
+		this.memId = memId;
+		this.showId = showId;
+		this.seatNo = seatNo;
+		this.cancelYn = cancelYn;
+	}
+
+	public MemTixHistVO(int memTixHistId, String memId, int showId, String seatNo, String cancelYn) {
+		super();
+		this.memTixHistId = memTixHistId;
 		this.memId = memId;
 		this.showId = showId;
 		this.seatNo = seatNo;
@@ -46,10 +56,18 @@ public class MemTixHistVO {
 		this.cancelYn = cancelYn;
 	}
 
+	public int getMemTixHistId() {
+		return memTixHistId;
+	}
+
+	public void setMemTixHistId(int memTixHistId) {
+		this.memTixHistId = memTixHistId;
+	}
+
 	@Override
 	public String toString() {
-		return "MemTixHistVO [memId=" + memId + ", showId=" + showId + ", seatNo=" + seatNo + ", cancelYn=" + cancelYn
-				+ "]";
+		return "MemTixHistVO [memTixHistId=" + memTixHistId + ", memId=" + memId + ", showId=" + showId + ", seatNo="
+				+ seatNo + ", cancelYn=" + cancelYn + "]";
 	}
 
 }

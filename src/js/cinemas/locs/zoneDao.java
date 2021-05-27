@@ -49,6 +49,7 @@ public class zoneDao {
 		builder.append("                                         FROM LOCATIONS");
 		builder.append("                                        WHERE LOCATION_NAME = 'CGV'||?)");
 		builder.append("              AND LOCATIONS.LOCATION_ID = ZONE.LOCATION_ID");
+		builder.append("     ORDER BY ZONE.ZONE_ID");
 
 		String sql = builder.toString();
 		PreparedStatement statement = connection.prepareStatement(sql);
@@ -108,24 +109,34 @@ public class zoneDao {
 				"java");
 		StringBuilder builder = new StringBuilder();
 
-		builder.append("        INSERT INTO ZONE(LOCATION_ID, ZONE_ID, SEAT_CNT, OPENED_YN) ");
-		builder.append("        SELECT  B.LOCATION_ID, ");
-		builder.append("               CASE WHEN MAX(ZONE.ZONE_ID) IS NULL THEN 1");
-		builder.append("                    ELSE MAX(ZONE.ZONE_ID) + 1");
-		builder.append("                END ");
-		builder.append("              , ?, NULL ");
-		builder.append("          FROM ZONE, ( SELECT LOCATION_ID");
-		builder.append("                          FROM LOCATIONS");
-		builder.append("                         WHERE LOCATION_NAME = 'CGV'||?) B ");
-		builder.append("         WHERE ZONE.LOCATION_ID = B.LOCATION_ID");
-		builder.append("         GROUP BY B.LOCATION_ID, ?         ");
+		builder.append("INSERT INTO ZONE(LOCATION_ID, LOCATION_NAME, ZONE_ID, SEAT_CNT)");
+		builder.append("        SELECT A.LOCATION_ID, A.LOCATION_NAME,");
+		builder.append("           CASE WHEN A.MAX_ZONE_ID IS NULL THEN 1");
+		builder.append("                ELSE A.MAX_ZONE_ID");
+		builder.append("                END");
+		builder.append("            , ?");
+		builder.append("          FROM (SELECT  B.LOCATION_ID, B.LOCATION_NAME, MAX(ZONE.ZONE_ID) AS MAX_ZONE_ID                      ");
+		builder.append("                  FROM ZONE, ( SELECT LOCATION_ID, LOCATION_NAME");
+		builder.append("                                  FROM LOCATIONS");
+		builder.append("                                 WHERE LOCATION_NAME LIKE 'CGV'||?) B ");
+		builder.append("                 WHERE ZONE.LOCATION_ID = B.LOCATION_ID");
+		builder.append("                 GROUP BY B.LOCATION_ID, B.LOCATION_NAME              ");
+		builder.append("                                    UNION ALL             ");
+		builder.append("                 SELECT  B.LOCATION_ID, B.LOCATION_NAME, NULL AS MAX_ZONE_ID");
+		builder.append("                   FROM DUAL, ( SELECT LOCATION_ID, LOCATION_NAME");
+		builder.append("                                  FROM LOCATIONS");
+		builder.append("                                 WHERE LOCATION_NAME LIKE 'CGV'||?) B        ");
+		builder.append("                 GROUP BY B.LOCATION_ID, B.LOCATION_NAME) A");
+		builder.append("          WHERE MAX_ZONE_ID IS NOT NULL OR ROWNUM = 1   ");
+
 
 		String sql = builder.toString();
 		PreparedStatement statement = connection.prepareStatement(sql);
 
 		statement.setInt(1, seatCnt);
 		statement.setString(2, locName);
-		statement.setInt(3, seatCnt);
+		statement.setString(3, locName);
+	
 
 		int result = statement.executeUpdate();
 		if (result > 0) {

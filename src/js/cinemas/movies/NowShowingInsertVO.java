@@ -12,6 +12,19 @@ public class NowShowingInsertVO {
 	private String seats;
 	private String showYn;
 
+	public NowShowingInsertVO(int showId, int movieId, String startsAt, String endsAt, int priceId, int zoneId,
+			String locationId, String seats) {
+		super();
+		this.showId = showId;
+		this.movieId = movieId;
+		this.startsAt = startsAt;
+		this.endsAt = endsAt;
+		this.priceId = priceId;
+		this.zoneId = zoneId;
+		this.locationId = locationId;
+		this.seats = seats;
+	}
+
 	public NowShowingInsertVO(int showId, int movieId, String startsAt, String endsAt, String ratingId, int priceId,
 			int zoneId, String locationId, String seats, String showYn) {
 		super();
