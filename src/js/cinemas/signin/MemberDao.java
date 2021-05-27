@@ -146,4 +146,40 @@ public class MemberDao {
 		statement.close();
 		connection.close();
 	}
+	
+	public class memberSignIn {
+	//FIXME : 20210528 집에서 함  
+	public void updateMileage(MemberVO vo) throws Exception { // 회원 가
+		Class.forName("oracle.jdbc.driver.OracleDriver");
+		Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521/xe", "CINEMAPROJECT",
+				"java");
+		StringBuilder builder = new StringBuilder();
+
+		builder.append("          INSERT INTO MEMBER");
+		builder.append("                 (MEM_ID, MEM_PASS, MEM_NAME, MEM_BIR, MEM_ADD1, MEMADD2, MEM_MOBILE");
+		builder.append("                 VALUES(?, ?, ?, ?, ?, ?, ?)  ");
+
+		String sql = builder.toString();
+		PreparedStatement statement = connection.prepareStatement(sql);
+		
+		statement.setString(1, vo.getMemId());
+		statement.setString(2, vo.getMemPass());
+		statement.setString(3, vo.memName());
+		statement.setString(4, vo.memBir());
+		statement.setString(5, vo.memAdd1());
+		statement.setString(6, vo.memAdd2());
+		statement.setString(7, vo.memMobile());
+
+		int result = statement.executeUpdate();
+		if (result > 0) {
+			System.out.println("회원 가입 성공!"); 
+		} else {
+			System.out.println("가입 실패!");
+		}
+		statement.close();
+		connection.close();
+
+		statement.close();
+		connection.close();
+	}
 }
