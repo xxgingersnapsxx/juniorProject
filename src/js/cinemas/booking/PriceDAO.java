@@ -9,7 +9,7 @@ public class PriceDAO {
 	public int returnPriceAmt(int priceId) throws Exception { // priceId 받아서 가격리턴 메소드
 
 		Class.forName("oracle.jdbc.driver.OracleDriver");
-		Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521/xe", "CINEMAPROJECT",
+		Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.45.22:1521/xe", "CINEMAPROJECT",
 				"java");
 		StringBuilder builder = new StringBuilder();
 

@@ -16,7 +16,7 @@ public class seatDAO {
 		NowShowingDAO nowShowingDAO = new NowShowingDAO();
 		LocationsDAO locationsDAO = new LocationsDAO();
 		Class.forName("oracle.jdbc.driver.OracleDriver");
-		Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521/xe", "CINEMAPROJECT",
+		Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.45.22:1521/xe", "CINEMAPROJECT",
 				"java");
 
 		StringBuilder builder = new StringBuilder();
@@ -65,7 +65,7 @@ public class seatDAO {
 		NowShowingDAO nowShowingDAO = new NowShowingDAO();
 		LocationsDAO locationsDAO = new LocationsDAO();
 		Class.forName("oracle.jdbc.driver.OracleDriver");
-		Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521/xe", "CINEMAPROJECT",
+		Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.45.22:1521/xe", "CINEMAPROJECT",
 				"java");
 
 		StringBuilder builder = new StringBuilder();
@@ -79,6 +79,35 @@ public class seatDAO {
 		PreparedStatement statement = connection.prepareStatement(sql);
 
 		statement.setString(1, locationsDAO.returnLocId(locName));
+		statement.setInt(2, zoneId);
+		statement.setInt(3, showId);
+		ResultSet resultSet = statement.executeQuery();
+		String seatOracleData = null;
+		while (resultSet.next()) {
+			seatOracleData = resultSet.getString("SEATS");
+		}
+
+		return seatOracleData;
+	}
+
+	public String getSeatDataWithLocId(int zoneId, int showId) throws Exception { // LOCID로 좌석 데이터 가져오는 메소드
+		NowShowingDAO nowShowingDAO = new NowShowingDAO();
+		LocationsDAO locationsDAO = new LocationsDAO();
+		Class.forName("oracle.jdbc.driver.OracleDriver");
+		Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.45.22:1521/xe", "CINEMAPROJECT",
+				"java");
+
+		StringBuilder builder = new StringBuilder();
+		builder.append("    SELECT SEATS");
+		builder.append("      FROM NOWSHOWING");
+		builder.append("     WHERE LOCATION_ID = ?");
+		builder.append("       AND ZONE_ID = ?");
+		builder.append("       AND SHOW_ID = ?");
+
+		String sql = builder.toString();
+		PreparedStatement statement = connection.prepareStatement(sql);
+
+		statement.setString(1, nowShowingDAO.returnLocID(1));
 		statement.setInt(2, zoneId);
 		statement.setInt(3, showId);
 		ResultSet resultSet = statement.executeQuery();
@@ -95,7 +124,7 @@ public class seatDAO {
 		NowShowingDAO nowShowingDAO = new NowShowingDAO();
 		LocationsDAO locationsDAO = new LocationsDAO();
 		Class.forName("oracle.jdbc.driver.OracleDriver");
-		Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521/xe", "CINEMAPROJECT",
+		Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.45.22:1521/xe", "CINEMAPROJECT",
 				"java");
 
 		StringBuilder builder = new StringBuilder();
@@ -119,7 +148,22 @@ public class seatDAO {
 		return seatOracleData;
 	}
 
-	public String SeatString(String seatData, String seatSelection) throws Exception { // 교체된 좌석 String 반환 메소드
+	public String SeatStringAfterRefund(String seatData, String seatSelection) throws Exception { // 예매시 교체된 좌석 String
+																									// 반환 메소드
+		StringBuilder builder = new StringBuilder(seatData);
+		char seat = ' ';
+		cancelDao cancelDao = new cancelDao();
+		char rowAlphbet = seatSelection.charAt(0);
+		int getColNum = Integer.parseInt(seatSelection.substring(1));
+		seat = cancelDao.returnSeatChar(getColNum).charAt(0);
+		int seatNumToChange = Integer.parseInt(String.valueOf((int) rowAlphbet - 65) + String.valueOf(getColNum));
+		builder.setCharAt(seatNumToChange, seat);
+		String seatOracleData = builder.toString();
+
+		return seatOracleData;
+	}
+
+	public String SeatString(String seatData, String seatSelection) throws Exception { // 환불시 교체된 좌석 String 반환 메소드
 		StringBuilder builder = new StringBuilder(seatData);
 
 		char rowAlphbet = seatSelection.charAt(0);
@@ -134,7 +178,7 @@ public class seatDAO {
 	public void updateSeatStatus(String seatString, int showId) throws Exception { // 좌석정보 변경 메소드
 
 		Class.forName("oracle.jdbc.driver.OracleDriver");
-		Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521/xe", "CINEMAPROJECT",
+		Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.45.22:1521/xe", "CINEMAPROJECT",
 				"java");
 		StringBuilder builder = new StringBuilder();
 

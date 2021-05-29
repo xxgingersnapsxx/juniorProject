@@ -10,7 +10,7 @@ import java.util.List;
 public class MvTypeDao {
 	public List<MvTypeVO> selectMvTypeList() throws Exception { // 영화 타입 목록 조회
 		Class.forName("oracle.jdbc.driver.OracleDriver");
-		Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521/xe", "CINEMAPROJECT",
+		Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.45.22:1521/xe", "CINEMAPROJECT",
 				"java");
 		Statement statement = connection.createStatement();
 		StringBuilder builder = new StringBuilder();

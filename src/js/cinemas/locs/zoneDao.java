@@ -11,7 +11,7 @@ import java.util.List;
 public class zoneDao {
 	public List<ZoneVO> selectAllZoneList() throws Exception { // 전체 상영관 목록 조회
 		Class.forName("oracle.jdbc.driver.OracleDriver");
-		Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521/xe", "CINEMAPROJECT",
+		Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.45.22:1521/xe", "CINEMAPROJECT",
 				"java");
 		Statement statement = connection.createStatement();
 		StringBuilder builder = new StringBuilder();
@@ -38,12 +38,11 @@ public class zoneDao {
 
 	public List<ZoneVO> selectAllZoneListByLoc(String locName) throws Exception { // 상영관 목록 지점별 조회, 매개변수 : 지점명
 		Class.forName("oracle.jdbc.driver.OracleDriver");
-		Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521/xe", "CINEMAPROJECT",
+		Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.45.22:1521/xe", "CINEMAPROJECT",
 				"java");
 
 		StringBuilder builder = new StringBuilder();
-		builder.append(
-				"           SELECT ZONE.ZONE_ID AS ZONE_ID, ZONE.SEAT_CNT AS SEAT_CNT, ZONE.LOCATION_ID AS LOCATION_ID, LOCATIONS.LOCATION_NAME AS LOCATION_NAME, ZONE.OPENED_YN AS OPENED_YN");
+		builder.append("           SELECT ZONE.ZONE_ID AS ZONE_ID, ZONE.SEAT_CNT AS SEAT_CNT, ZONE.LOCATION_ID AS LOCATION_ID, LOCATIONS.LOCATION_NAME AS LOCATION_NAME, ZONE.OPENED_YN AS OPENED_YN");
 		builder.append("              FROM ZONE, LOCATIONS");
 		builder.append("             WHERE ZONE.LOCATION_ID = (SELECT LOCATIONS.LOCATION_ID");
 		builder.append("                                         FROM LOCATIONS");
@@ -51,6 +50,7 @@ public class zoneDao {
 		builder.append("              AND LOCATIONS.LOCATION_ID = ZONE.LOCATION_ID");
 		builder.append("     ORDER BY ZONE.ZONE_ID");
 
+				
 		String sql = builder.toString();
 		PreparedStatement statement = connection.prepareStatement(sql);
 
@@ -75,7 +75,7 @@ public class zoneDao {
 
 	public int returnSeatCnt(String locId, int zoneId) throws Exception { // 상영관 별 좌석수 반환 메소드
 		Class.forName("oracle.jdbc.driver.OracleDriver");
-		Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521/xe", "CINEMAPROJECT",
+		Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.45.22:1521/xe", "CINEMAPROJECT",
 				"java");
 
 		StringBuilder builder = new StringBuilder();
@@ -105,7 +105,7 @@ public class zoneDao {
 
 	public void insertZone(String locName, int seatCnt) throws Exception { // 지점 이름으로 상영관 추가
 		Class.forName("oracle.jdbc.driver.OracleDriver");
-		Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521/xe", "CINEMAPROJECT",
+		Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.45.22:1521/xe", "CINEMAPROJECT",
 				"java");
 		StringBuilder builder = new StringBuilder();
 
@@ -151,7 +151,7 @@ public class zoneDao {
 	public void updateZoneSeatCnt(String locName, int zoneId, int seatCnt) throws Exception { // 지점명, 상영관 번호로 좌석 정보
 																								// update
 		Class.forName("oracle.jdbc.driver.OracleDriver");
-		Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521/xe", "CINEMAPROJECT",
+		Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.45.22:1521/xe", "CINEMAPROJECT",
 				"java");
 		StringBuilder builder = new StringBuilder();
 
@@ -181,7 +181,7 @@ public class zoneDao {
 
 	public void deleteZone(String locName, int zoneId) throws Exception { // 지점명, 상영관 번호로 상영관 YN -> N
 		Class.forName("oracle.jdbc.driver.OracleDriver");
-		Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521/xe", "CINEMAPROJECT",
+		Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.45.22:1521/xe", "CINEMAPROJECT",
 				"java");
 		StringBuilder builder = new StringBuilder();
 

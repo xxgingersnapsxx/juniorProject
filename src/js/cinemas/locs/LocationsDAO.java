@@ -11,7 +11,7 @@ import java.util.List;
 public class LocationsDAO {
 	public List<LocationsWithCityVO> selectAllLocationsList() throws Exception { // 전체 영화관 목록 조회
 		Class.forName("oracle.jdbc.driver.OracleDriver");
-		Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521/xe", "CINEMAPROJECT",
+		Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.45.22:1521/xe", "CINEMAPROJECT",
 				"java");
 		Statement statement = connection.createStatement();
 		StringBuilder builder = new StringBuilder();
@@ -37,7 +37,7 @@ public class LocationsDAO {
 
 	public List<LocationsWithCityVO> selectAllLocListByAddr(String ctName) throws Exception { // 영화관 목록 주소로 조회
 		Class.forName("oracle.jdbc.driver.OracleDriver");
-		Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521/xe", "CINEMAPROJECT",
+		Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.45.22:1521/xe", "CINEMAPROJECT",
 				"java");
 
 		StringBuilder builder = new StringBuilder();
@@ -68,7 +68,7 @@ public class LocationsDAO {
 	public List<LocationsWithCityVO> selectAllLocListByCity(String ctName) throws Exception { // 영화관 목록 도시별 조회, 매개변수 :
 		// 도시명
 		Class.forName("oracle.jdbc.driver.OracleDriver");
-		Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521/xe", "CINEMAPROJECT",
+		Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.45.22:1521/xe", "CINEMAPROJECT",
 				"java");
 		
 		StringBuilder builder = new StringBuilder();
@@ -100,7 +100,7 @@ public class LocationsDAO {
 
 	public String returnLocId(String locName) throws Exception { // 지점 location_id 리턴 메소드
 		Class.forName("oracle.jdbc.driver.OracleDriver");
-		Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521/xe", "CINEMAPROJECT",
+		Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.45.22:1521/xe", "CINEMAPROJECT",
 				"java");
 
 		StringBuilder builder = new StringBuilder();
@@ -128,7 +128,7 @@ public class LocationsDAO {
 
 	public String returnLocName(String locId) throws Exception { // 지점 location_name 리턴 메소드
 		Class.forName("oracle.jdbc.driver.OracleDriver");
-		Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521/xe", "CINEMAPROJECT",
+		Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.45.22:1521/xe", "CINEMAPROJECT",
 				"java");
 
 		StringBuilder builder = new StringBuilder();
@@ -155,8 +155,9 @@ public class LocationsDAO {
 	}
 
 	public void insertLocation(LocationsVO vo) throws Exception { // 영화관 추가
+		// FIXME 여기에서 왜 두개로 들어갈까 city id
 		Class.forName("oracle.jdbc.driver.OracleDriver");
-		Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521/xe", "CINEMAPROJECT",
+		Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.45.22:1521/xe", "CINEMAPROJECT",
 				"java");
 		StringBuilder builder = new StringBuilder();
 
@@ -179,7 +180,7 @@ public class LocationsDAO {
 		statement.setString(1, vo.getLocationName());
 		statement.setString(2, vo.getLocAddr1());
 		statement.setString(3, vo.getLocAddr2());
-		statement.setString(4, vo.getLocAddr1().substring(0, 1));
+		statement.setString(4, vo.getLocAddr1().substring(0, 2));
 
 		int result = statement.executeUpdate();
 		if (result > 0) {
@@ -194,7 +195,7 @@ public class LocationsDAO {
 	public void updateLocationYN(String locName) throws Exception { // 영화관 운영 정보 YN 변경
 
 		Class.forName("oracle.jdbc.driver.OracleDriver");
-		Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521/xe", "CINEMAPROJECT",
+		Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.45.22:1521/xe", "CINEMAPROJECT",
 				"java");
 		StringBuilder builder = new StringBuilder();
 
@@ -221,7 +222,7 @@ public class LocationsDAO {
 
 	public void deleteZone(String locName, int zoneId) throws Exception { // 지점명, 상영관 번호로 상영관 YN -> N
 		Class.forName("oracle.jdbc.driver.OracleDriver");
-		Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521/xe", "CINEMAPROJECT",
+		Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.45.22:1521/xe", "CINEMAPROJECT",
 				"java");
 		StringBuilder builder = new StringBuilder();
 

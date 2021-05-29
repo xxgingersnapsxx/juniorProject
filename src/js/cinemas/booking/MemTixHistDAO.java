@@ -5,8 +5,12 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.EmptyStackException;
 import java.util.List;
+
+import javax.swing.text.StyledEditorKit.ForegroundAction;
 
 import js.cinemas.movies.MoviesVO;
 
@@ -14,7 +18,7 @@ public class MemTixHistDAO {
 
 	public List<MemTixHistVO> selectMemTixHist(String loginId) throws Exception { // 특정 회원 예매 내역 조회
 		Class.forName("oracle.jdbc.driver.OracleDriver");
-		Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521/xe", "CINEMAPROJECT",
+		Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.45.22:1521/xe", "CINEMAPROJECT",
 				"java");
 		StringBuilder builder = new StringBuilder();
 
@@ -42,44 +46,49 @@ public class MemTixHistDAO {
 
 		return list;
 	}
-	public List<MemTixHistVO> selectAvaMemTixHist(String loginId) throws Exception { // 특정 회원 출력 가능한 예매 내역 조회
+
+	public List<vMemTixHistVO> selectAvaMemTixHist(String loginId) throws Exception { // 특정 회원 출력 가능한 예매 내역 조회
 		// FIXME 어젯밤에 여기 하다 맒
 		Class.forName("oracle.jdbc.driver.OracleDriver");
-		Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521/xe", "CINEMAPROJECT",
+		Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.45.22:1521/xe", "CINEMAPROJECT",
 				"java");
 		StringBuilder builder = new StringBuilder();
-		
-		builder.append("    SELECT MEM_ID, SHOW_ID, SEAT_NO, SHOW_DATE, CANCEL_YN");
-		builder.append("      FROM V_M_TIXHIS");
-		builder.append("     WHERE MEM_ID = ?");
-		builder.append("       AND SHOW_DATE >= SYSDATE");
-		builder.append("       AND CANCEL_YN = 'N'");
-		
+
+		builder.append("SELECT MEM_ID, SHOW_ID, SEAT_NO, SHOW_DATE, CANCEL_YN");
+		builder.append("  FROM (SELECT MEM_ID, SHOW_ID, SEAT_NO, SHOW_DATE, CANCEL_YN, ROWNUM AS RN ");
+		builder.append("         FROM V_M_TIXHIS                    ");
+		builder.append("        ORDER BY SHOW_DATE )");
+		builder.append(" WHERE RN > 50");
+		builder.append("   AND MEM_ID = ?");
+		builder.append("   AND SHOW_DATE > SYSDATE");
+		builder.append("   AND CANCEL_YN = 'N'");
+
 		String sql = builder.toString();
 		PreparedStatement statement = connection.prepareStatement(sql);
-		
+
 		statement.setString(1, loginId);
-		
+
 		ResultSet resultSet = statement.executeQuery();
-		List<MemTixHistVO> list = new ArrayList<MemTixHistVO>();
+		List<vMemTixHistVO> list = new ArrayList<vMemTixHistVO>();
+
 		while (resultSet.next()) {
 			String memId = loginId;
-			int memTixHist = resultSet.getInt("MEMTIXHIST_ID");
 			int showId = resultSet.getInt("SHOW_ID");
 			String seatNo = resultSet.getString("SEAT_NO");
+			LocalDateTime showDate = resultSet.getTimestamp("SHOW_DATE").toLocalDateTime();
 			String cancelYn = resultSet.getString("CANCEL_YN");
-			list.add(new MemTixHistVO(memTixHist, memId, showId, seatNo, cancelYn));
+			list.add(new vMemTixHistVO(memId, showId, seatNo, showDate, cancelYn));
 		}
 		resultSet.close();
 		statement.close();
 		connection.close();
-		
+
 		return list;
 	}
 
 	public void insertMemTixHist(String loginID, int showId, String seatNo) throws Exception { // 예매 내역 추가
 		Class.forName("oracle.jdbc.driver.OracleDriver");
-		Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521/xe", "CINEMAPROJECT",
+		Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.45.22:1521/xe", "CINEMAPROJECT",
 				"java");
 		StringBuilder builder = new StringBuilder();
 
@@ -109,7 +118,7 @@ public class MemTixHistDAO {
 
 	public int returnTixId(String memId, int showId, String seatNo) throws Exception { // 티켓번호 반환 메소드
 		Class.forName("oracle.jdbc.driver.OracleDriver");
-		Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521/xe", "CINEMAPROJECT",
+		Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.45.22:1521/xe", "CINEMAPROJECT",
 				"java");
 		StringBuilder builder = new StringBuilder();
 
@@ -130,6 +139,34 @@ public class MemTixHistDAO {
 		ResultSet resultSet = statement.executeQuery();
 		while (resultSet.next()) {
 			tixId = resultSet.getInt("MEMTIXHIST_ID");
+		}
+
+		resultSet.close();
+		statement.close();
+		connection.close();
+
+		return tixId;
+	}
+
+	public int returnNMTixId(String nonMemId) throws Exception { // 비회원 티켓 번호 반환 메소드
+		Class.forName("oracle.jdbc.driver.OracleDriver");
+		Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.45.22:1521/xe", "CINEMAPROJECT",
+				"java");
+		StringBuilder builder = new StringBuilder();
+
+		builder.append("SELECT N_MEMTIXHIST_ID");
+		builder.append("  FROM N_MEMTIXHIST");
+		builder.append(" WHERE N_MEM_ID = ?");
+
+		String sql = builder.toString();
+		PreparedStatement statement = connection.prepareStatement(sql);
+
+		statement.setString(1, nonMemId);
+
+		int tixId = 0;
+		ResultSet resultSet = statement.executeQuery();
+		while (resultSet.next()) {
+			tixId = resultSet.getInt("N_MEMTIXHIST_ID");
 		}
 
 		resultSet.close();

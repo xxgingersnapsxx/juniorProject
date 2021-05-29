@@ -13,7 +13,7 @@ import java.util.List;
 public class MoviesDAO {
 	public List<MoviesVO> selectAllMoviesList() throws Exception { // 전체 영화 목록 조회
 		Class.forName("oracle.jdbc.driver.OracleDriver");
-		Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521/xe", "CINEMAPROJECT",
+		Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.45.22:1521/xe", "CINEMAPROJECT",
 				"java");
 		Statement statement = connection.createStatement();
 		StringBuilder builder = new StringBuilder();
@@ -39,7 +39,7 @@ public class MoviesDAO {
 
 	public List<MoviesVO> selectNowShowingMVList() throws Exception { // 현재 상영중 영화 목록 조회
 		Class.forName("oracle.jdbc.driver.OracleDriver");
-		Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521/xe", "CINEMAPROJECT",
+		Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.45.22:1521/xe", "CINEMAPROJECT",
 				"java");
 		Statement statement = connection.createStatement();
 		StringBuilder builder = new StringBuilder();
@@ -65,7 +65,7 @@ public class MoviesDAO {
 
 	public String returnMvName(int mvId) throws Exception { // movie_id로부터 제목 반환하는 메소드
 		Class.forName("oracle.jdbc.driver.OracleDriver");
-		Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521/xe", "CINEMAPROJECT",
+		Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.45.22:1521/xe", "CINEMAPROJECT",
 				"java");
 		StringBuilder builder = new StringBuilder();
 		builder.append("    SELECT MV_TITLE");
@@ -92,7 +92,7 @@ public class MoviesDAO {
 
 	public List<moviesByLocVO> selectNowMVListByLoc(String locName) throws Exception { // 현재 상영중 영화 지점별 조회, 매개변수 : 지점명
 		Class.forName("oracle.jdbc.driver.OracleDriver");
-		Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521/xe", "CINEMAPROJECT",
+		Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.45.22:1521/xe", "CINEMAPROJECT",
 				"java");
 		// 테이블이 여러개인 경우 vo는 테이블기준이 아닌 메소드 단위로 생성
 		StringBuilder builder = new StringBuilder();
@@ -139,7 +139,7 @@ public class MoviesDAO {
 
 	public void insertMovies(MoviesVO vo) throws Exception { // 영화 추가
 		Class.forName("oracle.jdbc.driver.OracleDriver");
-		Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521/xe", "CINEMAPROJECT",
+		Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.45.22:1521/xe", "CINEMAPROJECT",
 				"java");
 		StringBuilder builder = new StringBuilder();
 		builder.append("        INSERT INTO MOVIES (MOVIE_ID, MV_TITLE");
@@ -153,7 +153,7 @@ public class MoviesDAO {
 
 		statement.setString(1, vo.getMvTitle());
 		statement.setInt(2, vo.getDuration());
-		statement.setInt(3, vo.getTypeId());
+		statement.setString(3, String.valueOf(vo.getTypeId()));
 
 		int result = statement.executeUpdate();
 		if (result > 0) {
@@ -168,7 +168,7 @@ public class MoviesDAO {
 
 	public void changeMovieStatus(int movieId, String yN) throws Exception { // 영화 상영 상태 변경 = 영화 삭제
 		Class.forName("oracle.jdbc.driver.OracleDriver");
-		Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521/xe", "CINEMAPROJECT",
+		Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.45.22:1521/xe", "CINEMAPROJECT",
 				"java");
 		StringBuilder builder = new StringBuilder();
 
@@ -195,7 +195,7 @@ public class MoviesDAO {
 	public void insertNowShowing(MoviesVO vo) throws Exception { // 상영 추가
 		// TODO vo nowshowingVO로 바꾸기
 		Class.forName("oracle.jdbc.driver.OracleDriver");
-		Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521/xe", "CINEMAPROJECT",
+		Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.45.22:1521/xe", "CINEMAPROJECT",
 				"java");
 		StringBuilder builder = new StringBuilder();
 		builder.append("        INSERT INTO NOWSHOWING(SHOW_ID, MOVIE_ID, STARTS_AT");

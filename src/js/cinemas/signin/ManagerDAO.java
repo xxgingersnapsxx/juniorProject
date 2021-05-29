@@ -13,7 +13,7 @@ public class ManagerDAO {
 		String managerId = null;
 		String managerPw = null;
 		Class.forName("oracle.jdbc.driver.OracleDriver");
-		Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521/xe", "CINEMAPROJECT",
+		Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.45.22:1521/xe", "CINEMAPROJECT",
 				"java");
 
 		StringBuilder builder = new StringBuilder();

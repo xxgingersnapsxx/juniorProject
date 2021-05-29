@@ -7,12 +7,41 @@ public class MemberVO {
 	private String memPass;
 	private String memName;
 	private LocalDate memBir;
+	private String memBirString;
 	private String memAdd1;
 	private String memAdd2;
 	private String memMobile;
 	private int memMileage;
 	private String memDelete;
 	private String locationId;
+
+	public MemberVO(String memId, String memPass, String memName, String memBirString, String memAdd1, String memAdd2,
+			String memMobile) {
+		super();
+		this.memId = memId;
+		this.memPass = memPass;
+		this.memName = memName;
+		this.memBirString = memBirString;
+		this.memAdd1 = memAdd1;
+		this.memAdd2 = memAdd2;
+		this.memMobile = memMobile;
+
+	}
+
+	public MemberVO(String memId, String memPass, String memName, String memBirString, String memAdd1, String memAdd2,
+			String memMobile, int memMileage, String memDelete, String locationId) {
+		super();
+		this.memId = memId;
+		this.memPass = memPass;
+		this.memName = memName;
+		this.memBirString = memBirString;
+		this.memAdd1 = memAdd1;
+		this.memAdd2 = memAdd2;
+		this.memMobile = memMobile;
+		this.memMileage = memMileage;
+		this.memDelete = memDelete;
+		this.locationId = locationId;
+	}
 
 	public MemberVO(String memId, String memPass, String memName, LocalDate memBir, String memAdd1, String memAdd2,
 			String memMobile, int memMileage, String memDelete, String locationId) {
@@ -120,11 +149,20 @@ public class MemberVO {
 		this.locationId = locationId;
 	}
 
+	public String getMemBirString() {
+		return memBirString;
+	}
+
+	public void setMemBirString(String memBirString) {
+		this.memBirString = memBirString;
+	}
+
 	@Override
 	public String toString() {
 		return "MemberVO [memId=" + memId + ", memPass=" + memPass + ", memName=" + memName + ", memBir=" + memBir
-				+ ", memAdd1=" + memAdd1 + ", memAdd2=" + memAdd2 + ", memMobile=" + memMobile + ", memMileage="
-				+ memMileage + ", memDelete=" + memDelete + ", locationId=" + locationId + "]";
+				+ ", memBirString=" + memBirString + ", memAdd1=" + memAdd1 + ", memAdd2=" + memAdd2 + ", memMobile="
+				+ memMobile + ", memMileage=" + memMileage + ", memDelete=" + memDelete + ", locationId=" + locationId
+				+ "]";
 	}
 
 }
